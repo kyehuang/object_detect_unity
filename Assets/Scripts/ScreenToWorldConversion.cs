@@ -11,7 +11,7 @@ public class ScreenToWorldConversion : MonoBehaviour
 
     public ConnectRosBridge connectRos;
     public string CameraDataTopic = "/camera_data";
-
+    private bool isTopicAdvertised = false;
         
     /// <summary>
     /// Function to get the world point of the object
@@ -22,6 +22,10 @@ public class ScreenToWorldConversion : MonoBehaviour
     /// 
     public void ScreenPointToWorldPoint(Vector3 ScreenPoint, string ObjectName)
     {                   
+        if (!isTopicAdvertised)
+        {
+            AdvertiseTopic();
+        }
         // use the marco of unity to get the world point of the object
         Vector3 worldPoint = camera.ScreenToWorldPoint(ScreenPoint);
         Debug.Log("World point using Unity's method: " + worldPoint);
@@ -43,6 +47,20 @@ public class ScreenToWorldConversion : MonoBehaviour
 
         connectRos.PublishString(CameraDataTopic, jsonData);
     }    
+
+    void AdvertiseTopic()
+    {
+        // Prepare the advertise message JSON
+        string advertiseMessage = $@"{{
+            ""op"": ""advertise"",
+            ""topic"": ""{CameraDataTopic}"",
+            ""type"": ""std_msgs/msg/String""
+        }}";
+
+        // Send the advertise message
+        connectRos.ws.Send(advertiseMessage);
+        isTopicAdvertised = true;
+    }
 
     [System.Serializable]
     public class CameraData
