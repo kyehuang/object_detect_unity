@@ -68,17 +68,5 @@ public class ConnectRosBridge : MonoBehaviour
         ws.Send(jsonMessage);  
     }
 
-    public void PublishImage(string topic, byte[] imagebytes)
-    {
-        string jsonMessage = $@"{{
-            ""op"": ""publish"",
-            ""topic"": ""{topic}"",
-            ""msg"": {{
-                ""format"": ""jpeg"",
-                ""data"": ""{System.Convert.ToBase64String(imagebytes)}""
-            }}
-        }}";
 
-        ws.Send(jsonMessage);
-    }
 }
